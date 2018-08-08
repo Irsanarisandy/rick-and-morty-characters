@@ -1,16 +1,12 @@
 import * as React from 'react';
+import banner from './assets/banner.png';
+import styles from './styles/main';
 
-// interface IState {
-//   imageFiles: any[],
-//   results: any,
-//   dropzone: any
-// }
-
-class App extends React.Component<{}/*, IState*/> {
+class App extends React.Component<{}> {
     public render() {
         return (
-            <div className="App">
-                <p>hello</p>
+            <div id="mainPage" style={styles.container}>
+                <img src={banner} alt="banner" style={styles.image} />
             </div>
         );
     }

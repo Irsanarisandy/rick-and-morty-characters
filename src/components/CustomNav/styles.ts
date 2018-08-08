@@ -1,6 +1,7 @@
 export default {
-    link: {
+    navLink: {
         color: 'white',
+        marginLeft: 18,
         textDecoration: 'none'
     }
 };

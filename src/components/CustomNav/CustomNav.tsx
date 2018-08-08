@@ -10,9 +10,12 @@ const Header: React.StatelessComponent<{}> = () => (
             <IconButton aria-label="Menu" color="inherit">
                 <MenuIcon aria-haspopup="true" />
             </IconButton>
-            <Typography variant="display1" color="inherit">
-                <Link style={styles.link} to="/">
+            <Typography variant="headline" color="inherit">
+                <Link style={styles.navLink} to="/">
                     Rick &amp; Morty Wiki
+                </Link>
+                <Link style={styles.navLink} to="/characters">
+                    Characters
                 </Link>
             </Typography>
         </Toolbar>
