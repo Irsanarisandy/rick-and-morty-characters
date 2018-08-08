@@ -98,7 +98,9 @@ class CharacterPage extends React.Component<{}, IState> {
                     >
                         <Search />&nbsp;Search
                     </Button>
-                    {this.state.loading ? <CircularProgress /> : null}
+                    {this.state.loading ? (
+                        <CircularProgress style={styles.loading} />
+                    ) : null}
                 </form>
                 <div style={styles.container}>
                     {this.state.data !== []
@@ -120,7 +122,7 @@ class CharacterPage extends React.Component<{}, IState> {
                           ))
                         : null}
                 </div>
-                <div style={styles.container}>
+                <div style={styles.buttons}>
                     <Button
                         disabled={
                             this.state.previous === '' || this.state.loading
@@ -129,6 +131,7 @@ class CharacterPage extends React.Component<{}, IState> {
                         color="primary"
                         aria-label="Previous"
                         onClick={this.handleSubmit('previous')}
+                        style={styles.button}
                     >
                         <ArrowLeft />
                     </Button>
@@ -138,6 +141,7 @@ class CharacterPage extends React.Component<{}, IState> {
                         color="primary"
                         aria-label="Next"
                         onClick={this.handleSubmit('next')}
+                        style={styles.button}
                     >
                         <ArrowRight />
                     </Button>
