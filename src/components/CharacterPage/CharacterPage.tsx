@@ -2,24 +2,25 @@ import {
     Button,
     Card,
     CardContent,
-    CardHeader,
-    CardMedia,
+    CircularProgress,
     FormControl,
     InputLabel,
     MenuItem,
     Select,
     TextField
 } from '@material-ui/core';
-import { Search } from '@material-ui/icons';
+import { ArrowLeft, ArrowRight, Search } from '@material-ui/icons';
 import * as React from 'react';
 import styles from './styles';
 
 interface IState {
     data: object[];
     gender: string;
+    loading: boolean;
     missingName: boolean;
     name: string;
-    page: number;
+    next: string;
+    previous: string;
     status: string;
 }
 
@@ -29,9 +30,11 @@ class CharacterPage extends React.Component<{}, IState> {
         this.state = {
             data: [],
             gender: '',
+            loading: false,
             missingName: false,
             name: '',
-            page: 1,
+            next: '',
+            previous: '',
             status: ''
         };
     }
@@ -87,34 +90,57 @@ class CharacterPage extends React.Component<{}, IState> {
                         </Select>
                     </FormControl>
                     <Button
+                        disabled={this.state.loading}
                         variant="contained"
                         size="small"
-                        onClick={this.handleSubmit}
+                        onClick={this.handleSubmit('')}
                         style={styles.button}
                     >
                         <Search />&nbsp;Search
                     </Button>
+                    {this.state.loading ? <CircularProgress /> : null}
                 </form>
-                <div>
+                <div style={styles.container}>
                     {this.state.data !== []
                         ? this.state.data.map((item: any) => (
-                              <Card key={item.name}>
-                                  <CardHeader title={item.name} />
-                                  <CardMedia
-                                      image={`${item.image}`}
-                                      title={item.name}
-                                  />
+                              <Card key={item.name} style={styles.card}>
                                   <CardContent>
-                                      <p>{item.status}</p>
-                                      <p>{item.species}</p>
-                                      <p>{item.type}</p>
-                                      <p>{item.gender}</p>
-                                      <p>{item.origin.name}</p>
-                                      <p>{item.location.name}</p>
+                                      <h2>{item.name}</h2>
+                                      <img src={item.image} alt={item.name} />
+                                      <p>Status: {item.status}</p>
+                                      <p>Species: {item.species}</p>
+                                      {item.type !== '' ? (
+                                          <p>Type: {item.type}</p>
+                                      ) : null}
+                                      <p>Gender: {item.gender}</p>
+                                      <p>Origin: {item.origin.name}</p>
+                                      <p>Location: {item.location.name}</p>
                                   </CardContent>
                               </Card>
                           ))
                         : null}
+                </div>
+                <div style={styles.container}>
+                    <Button
+                        disabled={
+                            this.state.previous === '' || this.state.loading
+                        }
+                        variant="fab"
+                        color="primary"
+                        aria-label="Previous"
+                        onClick={this.handleSubmit('previous')}
+                    >
+                        <ArrowLeft />
+                    </Button>
+                    <Button
+                        disabled={this.state.next === '' || this.state.loading}
+                        variant="fab"
+                        color="primary"
+                        aria-label="Next"
+                        onClick={this.handleSubmit('next')}
+                    >
+                        <ArrowRight />
+                    </Button>
                 </div>
             </div>
         );
@@ -128,33 +154,48 @@ class CharacterPage extends React.Component<{}, IState> {
         } as object);
     };
 
-    private handleSubmit = (event: React.MouseEvent<HTMLElement>) => {
-        let link = 'https://rickandmortyapi.com/api/character/';
+    private handleSubmit = (mode: string) => (
+        event: React.MouseEvent<HTMLElement>
+    ) => {
+        let link =
+            mode === 'previous'
+                ? this.state.previous
+                : mode === 'next'
+                    ? this.state.next
+                    : 'https://rickandmortyapi.com/api/character/';
+        this.setState({ loading: true });
         if (this.state.name.trim() === '') {
-            this.setState({
-                missingName: true
-            });
+            this.setState({ missingName: true });
         } else {
             this.setState({
+                data: [],
                 missingName: false
             });
-            link += `?name=${this.state.name}`;
-            if (this.state.status !== '') {
-                link += `&status=${this.state.status}`;
-            }
-            if (this.state.gender !== '') {
-                link += `&gender=${this.state.gender}`;
+            if (mode === '') {
+                link += `?name=${this.state.name}`;
+                if (this.state.status !== '') {
+                    link += `&status=${this.state.status}`;
+                }
+                if (this.state.gender !== '') {
+                    link += `&gender=${this.state.gender}`;
+                }
             }
             fetch(link)
                 .then((results: Response) => {
+                    this.setState({ loading: false });
                     return results.json();
                 })
                 .then((data: any) => {
                     this.setState({
-                        data: data.results
+                        data: data.results,
+                        next: data.info.next,
+                        previous: data.info.prev
                     });
                 })
-                .catch((error: Error) => console.error(error));
+                .catch((error: Error) => {
+                    this.setState({ loading: false });
+                    console.error(error);
+                });
         }
     };
 }
