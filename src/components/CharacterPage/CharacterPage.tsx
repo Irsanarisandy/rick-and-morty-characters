@@ -96,7 +96,8 @@ class CharacterPage extends React.Component<{}, IState> {
                         onClick={this.handleSubmit('')}
                         style={styles.button}
                     >
-                        <Search />&nbsp;Search
+                        <Search />
+                        &nbsp;Search
                     </Button>
                     {this.state.loading ? (
                         <CircularProgress style={styles.loading} />
@@ -167,15 +168,15 @@ class CharacterPage extends React.Component<{}, IState> {
                 : mode === 'next'
                     ? this.state.next
                     : 'https://rickandmortyapi.com/api/character/';
-        if (this.state.name.trim() === '') {
+        if (this.state.name.trim() === '' && mode === '') {
             this.setState({ missingName: true });
         } else {
             this.setState({
                 data: [],
-                loading: true,
-                missingName: false
+                loading: true
             });
             if (mode === '') {
+                this.setState({ missingName: false });
                 link += `?name=${this.state.name}`;
                 if (this.state.status !== '') {
                     link += `&status=${this.state.status}`;
