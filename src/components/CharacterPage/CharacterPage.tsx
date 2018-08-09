@@ -167,12 +167,12 @@ class CharacterPage extends React.Component<{}, IState> {
                 : mode === 'next'
                     ? this.state.next
                     : 'https://rickandmortyapi.com/api/character/';
-        this.setState({ loading: true });
         if (this.state.name.trim() === '') {
             this.setState({ missingName: true });
         } else {
             this.setState({
                 data: [],
+                loading: true,
                 missingName: false
             });
             if (mode === '') {
